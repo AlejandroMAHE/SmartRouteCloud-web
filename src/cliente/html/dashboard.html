@@ -1,35 +1,88 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible"content="ie=edge">
   <link rel="stylesheet" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.20.0/maps/maps.css">
 <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.20.0/maps/maps-web.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../ext/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/keyframes.css">
+  <link rel="stylesheet" href="../css/banner.css">
+  <link rel="stylesheet" href="../css/styleDH.css">
   <meta charset="UTF-8">
   <title>Inicio</title>
 </head>
 <body>
 
-  <h1> Dashboard </h1>
+  <h1> Dashboard 
+    <button id="btnLogout">Cerrar sesión</button>
+  </h1>
 
-  <button id="logout">Cerrar sesión</button>
+  
+  
 
-  <h3>Resumen</h3>
-  <ul>
-    <li>En tránsito: <span id="transito">0</span></li>
-    <li>Entregados: <span id="entregados">0</span></li>
-    <li>Retrasados: <span id="retrasados">0</span></li>
-  </ul>
+    <div class="container-fluid">
+        <div class="row">
+            
+            <div class="col-md-3">
+                <h6 class="text-muted font-weight-bold mb-3">ENVÍOS ACTIVOS</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover bg-white border">
+                        <thead>
+                            <tr>
+                                <th>ID ENVÍO</th>
+                                <th>ESTADO</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-envios">
+                            <tr><td>ML1001</td><td><span class="status-badge bg-light text-warning border border-warning">EN TRÁNSITO</span></td></tr>
+                            <tr class="bg-light"><td>ML1002</td><td><span class="status-badge bg-light text-success border border-success">ENTREGADO</span></td></tr>
+                            <tr><td>ML1003</td><td><span class="status-badge bg-light text-danger border border-danger">RETRASADO</span></td></tr>
+                            <tr class="bg-light"><td>ML1004</td><td><span class="status-badge bg-light text-warning border border-warning">EN TRÁNSITO</span></td></tr>
+                            <tr><td>ML1005</td><td><span class="status-badge bg-light text-success border border-success">ENTREGADO</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-  <h3>Mapa de envíos</h3>
+            <div class="col-md-9">
+                <h6 class="text-muted font-weight-bold mb-3">RESUMEN DE ENVÍOS</h6>
+                
+                <div class="row mb-4">
+                    <div class="col-sm-4">
+                        <div class="card card-summary p-3">
+                            <small class="text-muted">EN TRÁNSITO</small>
+                            <span id="transito">2</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="card card-summary p-3">
+                            <small class="text-muted text-success">ENTREGADOS</small>
+                            <span id="entregados">2</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="card card-summary p-3">
+                            <small class="text-muted text-danger">RETRASADOS</small>
+                            <span id="retrasados">1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <div id="map" style="height: 400px;"></div>
-
+    <h3>Mapa de envíos</h3>
+  <div id="map" style="height: 550px;"></div>
 
   
 
-
-  
 
   <script type="module" src="../js/dashboard.js"></script>
   <script type="module" src="../js/tomtomAPI.js"></script>
+  <script src="../ext/bootstrap/js/jquery.js"></script>
+  <script src="../ext/bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>

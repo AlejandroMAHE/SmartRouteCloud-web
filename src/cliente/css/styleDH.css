@@ -1,0 +1,127 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fdfcf0; /* Fondo crema muy claro */
+    margin: 0;
+    padding: 20px;
+    color: #4a4a00; /* Texto café amarillento oscuro */
+}
+
+/* Encabezado Principal */
+h1 {
+    background-color: #ffcc00; /* Amarillo vibrante en lugar de negro */
+    color: #333;
+    padding: 15px;
+    margin: -20px -20px 20px -20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.5rem;
+}
+
+/* Botón Cerrar Sesión */
+#logout {
+    background-color: transparent;
+    color: #333;
+    border: 1px solid #333;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+#logout:hover {
+    background-color: #e6b800;
+}
+
+/* Contenedor de Resumen (Cards) */
+ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+li {
+    background-color: #fff9db; /* Amarillo muy tenue */
+    border-left: 5px solid #ffcc00; /* Borde amarillo fuerte */
+    padding: 20px;
+    flex: 1;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+li span {
+    display: block;
+    font-size: 2.5rem;
+    margin-top: 10px;
+    color: #333;
+}
+
+/* Mapa */
+#map {
+    border: 2px solid #ffcc00;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #eee;
+}
+
+/* Títulos de sección */
+h3 {
+    border-bottom: 2px solid #ffcc00;
+    display: inline-block;
+    padding-bottom: 5px;
+    color: #8a6d3b;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+/* CSS Personalizado para el "Baño de Amarillo" */
+        :root { --main-yellow: #ffc107; }
+
+        body { background-color: #fcfcf4; }
+
+        /* Cambiamos el fondo negro del header por amarillo */
+        .navbar-custom {
+            background-color: var(--main-yellow);
+            color: #212529;
+            padding: 10px 20px;
+        }
+
+        /* Tabla: Cabecera amarilla en lugar de negra */
+        .table thead th {
+            background-color: var(--main-yellow);
+            color: #212529;
+            border: none;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        /* Tarjetas de resumen con acento amarillo */
+        .card-summary {
+            border-left: 5px solid var(--main-yellow);
+            border-radius: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .card-summary span {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        #map {
+            height: 450px;
+            width: 100%;
+            border: 2px solid var(--main-yellow);
+            border-radius: 4px;
+        }
+
+        .status-badge {
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 3px;
+        }

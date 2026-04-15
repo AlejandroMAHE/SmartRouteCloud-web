@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible"content="ie=edge">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../ext/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/keyframes.css">
+  <link rel="stylesheet" href="../css/banner.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <title>Recuperar contraseña</title>
+
+  
+  
+  
+</head>
+
+<body>
+
+  
+
+  <div class="login-container">
+
+    <div class="side-yellow">
+      <img src="../img/Logo SmartRoute Cloud.png" class="img1">
+    </div>
+
+    <div class="side-white">
+      <h1>Recuperar contraseña</h1>
+
+      <div class="login">
+        
+        <!--  IMPORTANTE: IDs -->
+        <input 
+          type="email" 
+          id="email" 
+          class="form-control" 
+          placeholder="Correo electrónico"
+        >
+
+        <div class="text-center">
+          <!--  BOTÓN CON ID -->
+          <button id="btnReset" class="btn btn-login" type="button">
+            Enviar
+          </button>
+        </div>
+
+        <!--  MENSAJE DE ERROR -->
+        <p id="error" class="error"></p>
+        
+
+      
+      
+    </div>
+     
+
+  </div>
+
+  <!--  SOLO ESTE SCRIPT (IMPORTANTE) -->
+  <script type="module" src="../js/RecuperarContrasena.js"></script>
+  <script src="../ext/bootstrap/js/jquery.js"></script>
+  <script src="../ext/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>
