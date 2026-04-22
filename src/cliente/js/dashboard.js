@@ -10,6 +10,8 @@ import {
 import { logout } from "./auth.js";
 import { auth } from "./firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+// se modificó para que esto salga desde endpoint - patch
+import { config } from "./config.js";
 
 document.getElementById("btnLogout").addEventListener("click", logout);
 
@@ -24,18 +26,29 @@ onAuthStateChanged(auth, (user) => {
 
 const map = iniciarMapa();
 
-// Estado central de envíos
-let envios = [
-  { id: "ML1001", lat: 19.4326, lng: -99.1332, estado: "EN TRÁNSITO" },
-  { id: "ML1002", lat: 19.4195, lng: -99.1652, estado: "ENTREGADO" },
-  { id: "ML1003", lat: 19.3910, lng: -99.0838, estado: "RETRASADO" },
-  { id: "ML1004", lat: 19.4780, lng: -99.1429, estado: "EN TRÁNSITO" },
-  { id: "ML1005", lat: 19.4060, lng: -99.1713, estado: "ENTREGADO" }
-];
+// se modificó para que esto salga desde endpoint - patch
+// Estado central de envíos (se carga desde API en iniciarSistema)
+let envios = [];
 
 const coloresRuta = {
   "RETRASADO":   "#ef4444",
   "EN TRÁNSITO": "#FFA500"
+};
+
+// se modificó para que esto salga desde endpoint - patch
+// Mapa de estados UI → estados de API backend
+const estadoAPIMap = {
+  "EN TRÁNSITO": "en_proceso",
+  "ENTREGADO":   "completada",
+  "RETRASADO":   "fallida"
+};
+
+// se modificó para que esto salga desde endpoint - patch
+// Mapa inverso: estados de API backend → estados UI
+const estadoUIMap = {
+  "en_proceso": "EN TRÁNSITO",
+  "completada": "ENTREGADO",
+  "fallida":    "RETRASADO"
 };
 
 const marcadores = {}; // guarda referencia a cada marcador por id
@@ -105,6 +118,22 @@ async function cambiarEstado(id, nuevoEstado) {
   envio.estado = nuevoEstado;
   actualizarResumen();
 
+  // se modificó para que esto salga desde endpoint - patch
+  // Actualizar estado en el backend vía PUT /api/chofer/entregas/:id
+  try {
+    const token = await auth.currentUser.getIdToken();
+    await fetch(`${config.backendURL}/api/chofer/entregas/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ estado: estadoAPIMap[nuevoEstado] || nuevoEstado })
+    });
+  } catch (err) {
+    console.error("Error al actualizar entrega en backend:", err);
+  }
+
   // Actualizar marcador en mapa
   if (marcadores[id]) {
     marcadores[id].remove();
@@ -143,6 +172,7 @@ async function trazarRutasIniciales() {
 }
 
 // ─── INICIO ─────────────────────────────────────────────────────────
+// se modificó para que esto salga desde endpoint - patch
 async function iniciarSistema() {
   try {
     const ubicacion = await obtenerUbicacion();
@@ -154,6 +184,57 @@ async function iniciarSistema() {
 
     // Carrito
     marcadorCarrito(map, lng, lat, "Mi ubicación");
+
+    // se modificó para que esto salga desde endpoint - patch
+    // Obtener token de autenticación Firebase
+    const token = await auth.currentUser.getIdToken();
+
+    // se modificó para que esto salga desde endpoint - patch
+    // Obtener tiempo estimado de ruta desde GET /api/chofer/mi-ruta
+    try {
+      const rutaRes = await fetch(`${config.backendURL}/api/chofer/mi-ruta`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (rutaRes.ok) {
+        const ruta = await rutaRes.json();
+        const tiempoEl = document.getElementById("tiempo-ruta");
+        if (tiempoEl && ruta.tiempoEstimado) {
+          tiempoEl.textContent = ruta.tiempoEstimado;
+        }
+      }
+    } catch (err) {
+      console.error("Error al obtener tiempo de ruta:", err);
+    }
+
+    // se modificó para que esto salga desde endpoint - patch
+    // Obtener lista de entregas desde GET /api/chofer/mi-ruta/entregas
+    try {
+      const entregasRes = await fetch(`${config.backendURL}/api/chofer/mi-ruta/entregas`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (entregasRes.ok) {
+        const data = await entregasRes.json();
+        // se modificó para que esto salga desde endpoint - patch
+        // Mapear respuesta de API al formato local de envíos
+        envios = (data.entregas || []).reduce((acc, e) => {
+          const lat = e.lat ?? e.latitud;
+          const lng = e.lng ?? e.longitud;
+          if (lat == null || lng == null) {
+            console.warn(`Entrega ${e.id} sin coordenadas, se omite del mapa.`);
+            return acc;
+          }
+          acc.push({
+            id: e.id,
+            lat,
+            lng,
+            estado: estadoUIMap[e.estado] ?? "EN TRÁNSITO"
+          });
+          return acc;
+        }, []);
+      }
+    } catch (err) {
+      console.error("Error al obtener entregas:", err);
+    }
 
     // Marcadores de envíos
     envios.forEach(envio => {
