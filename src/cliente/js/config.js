@@ -11,6 +11,6 @@ export const firebaseConfig = {
 
 // se modificó para que esto salga desde endpoint - patch
 export const config = {
-  backendURL: "https://smartroutecloud-web-production.up.railway.app",
+  backendURL: "https://us-central1-smartroute-60190.cloudfunctions.net/api",
   tomtomKey: "" // agregar TomTom API Key aquí - get it from https://developer.tomtom.com/
 };
