@@ -3,10 +3,10 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-const choferRoutes = require("./servidor/routes/chofer");
-const adminRoutes = require("./servidor/routes/admin");
-const tiRoutes = require("./servidor/routes/ti");
-const rutasRoutes = require("./servidor/routes/rutas");
+const choferRoutes = require("../functions/servidor/routes/chofer");
+const adminRoutes = require("../functions/servidor/routes/admin");
+const tiRoutes = require("../functions/servidor/routes/ti");
+const rutasRoutes = require("../functions/servidor/routes/rutas");
 
 const app = express();
 const PORT = process.env.PORT || 3000;

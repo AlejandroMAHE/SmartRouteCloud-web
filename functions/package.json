@@ -1,0 +1,20 @@
+{
+  "name": "smartroutecloud-functions",
+  "version": "1.0.0",
+  "description": "Firebase Cloud Functions para SmartRouteCloud",
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "scripts": {
+    "deploy": "firebase deploy --only functions",
+    "serve": "firebase emulators:start --only functions"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.3.2",
+    "firebase-admin": "^13.7.0",
+    "firebase-functions": "^7.2.5"
+  }
+}
