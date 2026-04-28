@@ -10,6 +10,7 @@ const {
   crearUsuario,
   cambiarRolUsuario,
   eliminarUsuario,
+  seedDatabase,
 } = require("../controllers/tiController");
 
 const limiter = rateLimit({
@@ -47,5 +48,8 @@ router.put("/users/:id/role", mutationLimiter, cambiarRolUsuario);
 
 // DELETE /api/ti/users/:id
 router.delete("/users/:id", mutationLimiter, eliminarUsuario);
+
+// POST /api/ti/seed
+router.post("/seed", mutationLimiter, seedDatabase);
 
 module.exports = router;

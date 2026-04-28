@@ -191,6 +191,177 @@ async function eliminarUsuario(req, res) {
   }
 }
 
+// POST /api/ti/seed - Crear colecciones/documentos base de demostración
+async function seedDatabase(req, res) {
+  try {
+    const now = new Date();
+
+    const adminData = req.body.admin || {};
+    const choferData = req.body.chofer || {};
+
+    const adminEmail = adminData.email || "admin@demo.com";
+    const adminPassword = adminData.password || "Admin123!";
+    const adminNombre = adminData.nombre || "Admin Demo";
+
+    const choferEmail = choferData.email || "chofer@demo.com";
+    const choferPassword = choferData.password || "Chofer123!";
+    const choferNombre = choferData.nombre || "Chofer Demo";
+
+    // Create Auth users (ignore if already exists and retrieve uid)
+    let adminUid, choferUid;
+
+    try {
+      const adminRecord = await admin.auth().createUser({
+        email: adminEmail,
+        password: adminPassword,
+        displayName: adminNombre,
+      });
+      adminUid = adminRecord.uid;
+    } catch (err) {
+      if (err.code === "auth/email-already-exists") {
+        const existing = await admin.auth().getUserByEmail(adminEmail);
+        adminUid = existing.uid;
+      } else {
+        throw err;
+      }
+    }
+
+    try {
+      const choferRecord = await admin.auth().createUser({
+        email: choferEmail,
+        password: choferPassword,
+        displayName: choferNombre,
+      });
+      choferUid = choferRecord.uid;
+    } catch (err) {
+      if (err.code === "auth/email-already-exists") {
+        const existing = await admin.auth().getUserByEmail(choferEmail);
+        choferUid = existing.uid;
+      } else {
+        throw err;
+      }
+    }
+
+    // Pre-generate document refs so IDs are available for cross-references
+    const unidadRef = db.collection("unidades").doc();
+    const conductorRef = db.collection("conductores").doc(choferUid);
+    const rutaRef = db.collection("rutas").doc();
+    const entregaRef = db.collection("entregas").doc();
+    const routeRef = db.collection("routes").doc();
+
+    const demoEntrega = {
+      id: entregaRef.id,
+      estado: "pendiente",
+      lat: 19.432608,
+      lng: -99.133209,
+      direccion: "Calle Demo 123",
+    };
+
+    const batch = db.batch();
+
+    // users
+    batch.set(db.collection("users").doc(adminUid), {
+      nombre: adminNombre,
+      email: adminEmail,
+      role: "ADMIN",
+      estado: "activo",
+      adminAsignado: null,
+      choferesAsignados: [choferUid],
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    batch.set(db.collection("users").doc(choferUid), {
+      nombre: choferNombre,
+      email: choferEmail,
+      role: "CHOFER",
+      estado: "activo",
+      adminAsignado: adminUid,
+      choferesAsignados: null,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // unidades
+    batch.set(unidadRef, {
+      unidadId: unidadRef.id,
+      tipo: "Camión",
+      placa: "ABC-1234",
+      conductorAsignado: choferUid,
+      estado: "activo",
+      capacidad: 1000,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // conductores
+    batch.set(conductorRef, {
+      conductorId: choferUid,
+      nombre: choferNombre,
+      telefono: "555-0000",
+      licencia: "LIC-DEMO-001",
+      estado: "activo",
+      unidadAsignada: unidadRef.id,
+      rutas: [rutaRef.id],
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // rutas (includes linked entrega ID)
+    batch.set(rutaRef, {
+      rutaId: rutaRef.id,
+      conductorId: choferUid,
+      unidadId: unidadRef.id,
+      estado: "pendiente",
+      origen: "Bodega Central",
+      destino: "Zona Norte",
+      entregas: [entregaRef.id],
+      horario: "08:00",
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // entregas
+    batch.set(entregaRef, {
+      entregaId: entregaRef.id,
+      rutaId: rutaRef.id,
+      estado: "pendiente",
+      destinatario: "Cliente Demo",
+      direccion: "Calle Demo 123",
+      latitud: 19.432608,
+      longitud: -99.133209,
+      peso: 10,
+      volumen: 0.05,
+      ordenEntrega: 1,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // routes (dashboard)
+    batch.set(routeRef, {
+      codigo: "RUTA-DEMO-001",
+      creadoPor: adminUid,
+      choferAsignado: choferUid,
+      fechaProgramada: now,
+      estado: "pendiente",
+      entregas: [demoEntrega],
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    await batch.commit();
+
+    res.status(201).json({
+      message: "Seed completado correctamente",
+      adminUid,
+      choferUid,
+    });
+  } catch (error) {
+    console.error("ti seed error:", error);
+    res.status(500).json({ error: "Error al ejecutar el seed" });
+  }
+}
+
 module.exports = {
   getTodosChoferes,
   getTodasRutas,
@@ -198,4 +369,5 @@ module.exports = {
   crearUsuario,
   cambiarRolUsuario,
   eliminarUsuario,
+  seedDatabase,
 };
